@@ -334,6 +334,7 @@ public class MapperScannerConfigurer
    */
   @Override
   public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
+    // 如果有属性占位符，则进行获得，例如 ${basePackage} 等等
     if (this.processPropertyPlaceHolders) {
       processPropertyPlaceHolders();
     }
@@ -352,7 +353,9 @@ public class MapperScannerConfigurer
     if (StringUtils.hasText(lazyInitialization)) {
       scanner.setLazyInitialization(Boolean.valueOf(lazyInitialization));
     }
+    // 注册过滤器
     scanner.registerFilters();
+    // 进行扫描
     scanner.scan(
         StringUtils.tokenizeToStringArray(this.basePackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS));
   }
@@ -401,6 +404,9 @@ public class MapperScannerConfigurer
     return this.applicationContext.getEnvironment();
   }
 
+  /**
+   * 获得属性值，并换成String类型
+   * */
   private String updatePropertyValue(String propertyName, PropertyValues values) {
     PropertyValue property = values.getPropertyValue(propertyName);
 

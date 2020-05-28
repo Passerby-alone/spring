@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * @author Hunter Presnall
  * @author Eduardo Macarron
- * 
+ *
  * @see MapperFactoryBean
  * @since 1.2.0
  */
@@ -141,15 +141,17 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
    * that extends a markerInterface or/and those annotated with the annotationClass
    */
   public void registerFilters() {
+    // 是否接受所有的接口
     boolean acceptAllInterfaces = true;
 
-    // if specified, use the given annotation and / or marker interface
+    // 是否指定了注解 添加 INCLUDE 过滤器 AnnotationTypeFilter 对象
     if (this.annotationClass != null) {
       addIncludeFilter(new AnnotationTypeFilter(this.annotationClass));
+      // 标记不是接受所有的接口
       acceptAllInterfaces = false;
     }
 
-    // override AssignableTypeFilter to ignore matches on the actual marker interface
+    // 如果指定了接口，则添加 INCLUDE 过滤器 AssignableTypeFilter 对象
     if (this.markerInterface != null) {
       addIncludeFilter(new AssignableTypeFilter(this.markerInterface) {
         @Override
@@ -162,6 +164,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
     if (acceptAllInterfaces) {
       // default include filter that accepts all classes
+      // 默认接受所有的class
       addIncludeFilter((metadataReader, metadataReaderFactory) -> true);
     }
 
@@ -178,12 +181,14 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
    */
   @Override
   public Set<BeanDefinitionHolder> doScan(String... basePackages) {
+    // 执行扫描，获得包下符合的类们，并分装成 BeanDefinitionHolder 对象的集合
     Set<BeanDefinitionHolder> beanDefinitions = super.doScan(basePackages);
 
     if (beanDefinitions.isEmpty()) {
       LOGGER.warn(() -> "No MyBatis mapper was found in '" + Arrays.toString(basePackages)
           + "' package. Please check your configuration.");
     } else {
+      // 处理 BeanDefinitionHolder 对象的集合
       processBeanDefinitions(beanDefinitions);
     }
 
@@ -192,6 +197,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
   private void processBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitions) {
     GenericBeanDefinition definition;
+    // 遍历 BeanDefinitionHolder 数组， 逐一设置属性
     for (BeanDefinitionHolder holder : beanDefinitions) {
       definition = (GenericBeanDefinition) holder.getBeanDefinition();
       String beanClassName = definition.getBeanClassName();

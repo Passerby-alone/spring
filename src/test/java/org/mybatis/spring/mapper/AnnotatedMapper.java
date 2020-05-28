@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 // annotated interface for MapperScannerPostProcessor tests
 // ensures annotated classes are loaded
-@Component
+//@Component
 public interface AnnotatedMapper {
   void method();
 }

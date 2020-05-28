@@ -93,10 +93,16 @@ public class SqlSessionFactoryBean
   private static final ResourcePatternResolver RESOURCE_PATTERN_RESOLVER = new PathMatchingResourcePatternResolver();
   private static final MetadataReaderFactory METADATA_READER_FACTORY = new CachingMetadataReaderFactory();
 
+  /**
+   * 指定 mybatis-config.xml
+   * */
   private Resource configLocation;
 
   private Configuration configuration;
 
+  /**
+   * 指定mapper路径的Resource数组
+   * */
   private Resource[] mapperLocations;
 
   private DataSource dataSource;
@@ -486,7 +492,7 @@ public class SqlSessionFactoryBean
     notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
     state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
         "Property 'configuration' and 'configLocation' can not specified with together");
-
+    // 构建 SqlSessionFactory 对象
     this.sqlSessionFactory = buildSqlSessionFactory();
   }
 
@@ -505,6 +511,7 @@ public class SqlSessionFactoryBean
 
     final Configuration targetConfiguration;
 
+    // 初始化 configuration 对象 设置 configuration.variables 属性
     XMLConfigBuilder xmlConfigBuilder = null;
     if (this.configuration != null) {
       targetConfiguration = this.configuration;
@@ -523,6 +530,7 @@ public class SqlSessionFactoryBean
       Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
     }
 
+    // 设置 configuration.objectFactory 属性
     Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);
     Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetConfiguration::setObjectWrapperFactory);
     Optional.ofNullable(this.vfs).ifPresent(targetConfiguration::setVfsImpl);
@@ -540,6 +548,7 @@ public class SqlSessionFactoryBean
       });
     }
 
+    // 设置拦截器
     if (!isEmpty(this.plugins)) {
       Stream.of(this.plugins).forEach(plugin -> {
         targetConfiguration.addInterceptor(plugin);
@@ -547,12 +556,14 @@ public class SqlSessionFactoryBean
       });
     }
 
+    // 设置 typeAliasesPackage 属性
     if (hasLength(this.typeHandlersPackage)) {
       scanClasses(this.typeHandlersPackage, TypeHandler.class).stream().filter(clazz -> !clazz.isAnonymousClass())
           .filter(clazz -> !clazz.isInterface()).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
           .forEach(targetConfiguration.getTypeHandlerRegistry()::register);
     }
 
+    // 设置 typeHandlers 属性
     if (!isEmpty(this.typeHandlers)) {
       Stream.of(this.typeHandlers).forEach(typeHandler -> {
         targetConfiguration.getTypeHandlerRegistry().register(typeHandler);
@@ -579,8 +590,10 @@ public class SqlSessionFactoryBean
       }
     }
 
+    // 设置cache属性
     Optional.ofNullable(this.cache).ifPresent(targetConfiguration::addCache);
 
+    // 解析mybatis-config属性
     if (xmlConfigBuilder != null) {
       try {
         xmlConfigBuilder.parse();
@@ -593,9 +606,11 @@ public class SqlSessionFactoryBean
     }
 
     targetConfiguration.setEnvironment(new Environment(this.environment,
+        // 设置SpringManagedTransactionFactory属性
         this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
         this.dataSource));
 
+    // 扫描 Mapper XML 文件们，并进行解析
     if (this.mapperLocations != null) {
       if (this.mapperLocations.length == 0) {
         LOGGER.warn(() -> "Property 'mapperLocations' was specified but matching resources are not found.");
@@ -619,7 +634,7 @@ public class SqlSessionFactoryBean
     } else {
       LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
     }
-
+    // 创建SqlSessionFactory对象
     return this.sqlSessionFactoryBuilder.build(targetConfiguration);
   }
 
@@ -628,6 +643,7 @@ public class SqlSessionFactoryBean
    */
   @Override
   public SqlSessionFactory getObject() throws Exception {
+    // 保证 SqlSessionFactory 对象的初始化
     if (this.sqlSessionFactory == null) {
       afterPropertiesSet();
     }
@@ -658,6 +674,7 @@ public class SqlSessionFactoryBean
   public void onApplicationEvent(ApplicationEvent event) {
     if (failFast && event instanceof ContextRefreshedEvent) {
       // fail-fast -> check all statements are completed
+      // 检查mapperStatement是否都初始化完成
       this.sqlSessionFactory.getConfiguration().getMappedStatementNames();
     }
   }

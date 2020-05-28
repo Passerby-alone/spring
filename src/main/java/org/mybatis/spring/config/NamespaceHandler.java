@@ -32,6 +32,7 @@ public class NamespaceHandler extends NamespaceHandlerSupport {
    */
   @Override
   public void init() {
+    // MapperScannerBeanDefinitionParser 解析scan标签
     registerBeanDefinitionParser("scan", new MapperScannerBeanDefinitionParser());
   }
 

@@ -49,12 +49,20 @@ import org.springframework.beans.factory.FactoryBean;
  *
  * @author Eduardo Macarron
  *
+ * 负责创建 Mapper 代理对象
+ *
  * @see SqlSessionTemplate
  */
 public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements FactoryBean<T> {
 
+  /**
+   * Mapper 接口
+   * */
   private Class<T> mapperInterface;
 
+  /**
+   * 是否添加到 Configuration 中
+   * */
   private boolean addToConfig = true;
 
   public MapperFactoryBean() {
@@ -70,10 +78,12 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
    */
   @Override
   protected void checkDaoConfig() {
+    // 效验 sqlSessionTemplate 非空
     super.checkDaoConfig();
-
+    // 效验 mapperInterface 是否为空
     notNull(this.mapperInterface, "Property 'mapperInterface' is required");
 
+    // 添加 Mapper 接口到Configuration中
     Configuration configuration = getSqlSession().getConfiguration();
     if (this.addToConfig && !configuration.hasMapper(this.mapperInterface)) {
       try {
@@ -88,7 +98,7 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
   }
 
   /**
-   * {@inheritDoc}
+   * 返回的是基于 Mapper 接口自动生成的代理对象
    */
   @Override
   public T getObject() throws Exception {

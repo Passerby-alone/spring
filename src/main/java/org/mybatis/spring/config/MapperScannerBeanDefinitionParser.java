@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 
 /**
  * A {#code BeanDefinitionParser} that handles the element scan of the MyBatis. namespace
- * 
+ *
  * @author Lishu Luo
  * @author Eduardo Macarron
  *
@@ -56,7 +56,7 @@ public class MapperScannerBeanDefinitionParser extends AbstractBeanDefinitionPar
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @since 2.0.2
    */
   @Override
@@ -67,6 +67,7 @@ public class MapperScannerBeanDefinitionParser extends AbstractBeanDefinitionPar
 
     builder.addPropertyValue("processPropertyPlaceHolders", true);
     try {
+      // 解析 annotation 属性
       String annotationClassName = element.getAttribute(ATTRIBUTE_ANNOTATION);
       if (StringUtils.hasText(annotationClassName)) {
         @SuppressWarnings("unchecked")
@@ -107,7 +108,7 @@ public class MapperScannerBeanDefinitionParser extends AbstractBeanDefinitionPar
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @since 2.0.2
    */
   @Override
