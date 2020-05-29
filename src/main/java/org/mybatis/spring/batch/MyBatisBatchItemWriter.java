@@ -48,7 +48,9 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  * multiple concurrent transactions.
  *
  * @author Eduardo Macarron
- * 
+ *
+ * 批量写入器
+ *
  * @since 1.1.0
  */
 public class MyBatisBatchItemWriter<T> implements ItemWriter<T>, InitializingBean {
@@ -140,10 +142,11 @@ public class MyBatisBatchItemWriter<T> implements ItemWriter<T>, InitializingBea
     if (!items.isEmpty()) {
       LOGGER.debug(() -> "Executing batch with " + items.size() + " items.");
 
+      // 遍历item数组，提交到 sqlSessionTemplate 中
       for (T item : items) {
         sqlSessionTemplate.update(statementId, itemToParameterConverter.convert(item));
       }
-
+      // 进行一次批量操作
       List<BatchResult> results = sqlSessionTemplate.flushStatements();
 
       if (assertUpdates) {

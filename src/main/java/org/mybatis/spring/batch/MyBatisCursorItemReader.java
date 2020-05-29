@@ -31,10 +31,16 @@ import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @author Guillaume Darmont / guillaume@dropinocean.com
+ *
+ * 基于游标的批量读取器
+ *
  */
 public class MyBatisCursorItemReader<T> extends AbstractItemCountingItemStreamItemReader<T>
     implements InitializingBean {
 
+  /**
+   * 查询编号
+   * */
   private String queryId;
 
   private SqlSessionFactory sqlSessionFactory;
@@ -66,7 +72,9 @@ public class MyBatisCursorItemReader<T> extends AbstractItemCountingItemStreamIt
     }
 
     sqlSession = sqlSessionFactory.openSession(ExecutorType.SIMPLE);
+    // 查询，返回 Cursor 对象
     cursor = sqlSession.selectCursor(queryId, parameters);
+    // 获得 cursor 的迭代器
     cursorIterator = cursor.iterator();
   }
 

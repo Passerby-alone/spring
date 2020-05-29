@@ -22,6 +22,8 @@ public class Employee {
   private int id;
   private String name;
   private int salary;
+
+  private String skill;
   private List<String> skills;
 
   public int getId() {
@@ -54,6 +56,14 @@ public class Employee {
 
   public void setSkills(List<String> skills) {
     this.skills = skills;
+  }
+
+  public String getSkill() {
+    return skill;
+  }
+
+  public void setSkill(String skill) {
+    this.skill = skill;
   }
 
   @Override

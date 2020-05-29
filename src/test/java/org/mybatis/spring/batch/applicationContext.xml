@@ -30,14 +30,21 @@
      http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
   <!-- in-memory database and a datasource -->
-  <jdbc:embedded-database id="dataSource">
-    <jdbc:script location="classpath:org/mybatis/spring/batch/db/database-schema.sql"/>
-    <jdbc:script location="classpath:org/mybatis/spring/batch/db/database-test-data.sql"/>
-  </jdbc:embedded-database>
+  <!--<jdbc:embedded-database id="dataSource">-->
+    <!--<jdbc:script location="classpath:org/mybatis/spring/batch/db/database-schema.sql"/>-->
+    <!--<jdbc:script location="classpath:org/mybatis/spring/batch/db/database-test-data.sql"/>-->
+  <!--</jdbc:embedded-database>-->
+
+  <bean id="unpooledDataSourceDataSource" class="org.apache.ibatis.datasource.unpooled.UnpooledDataSource">
+    <property name="driver" value="com.mysql.cj.jdbc.Driver" />
+    <property name="url" value="jdbc:mysql://localhost:3306/zhiyang?serverTimezone=GMT%2B8" />
+    <property name="username" value="root" />
+    <property name="password" value="888888" />
+  </bean>
 
   <!-- transaction manager, use JtaTransactionManager for global tx -->
   <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    <property name="dataSource" ref="dataSource"/>
+    <property name="dataSource" ref="unpooledDataSourceDataSource"/>
   </bean>
 
   <!-- enable transaction demarcation with annotations -->
@@ -45,7 +52,7 @@
 
   <!-- simplest possible SqlSessionFactory configuration -->
   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-    <property name="dataSource" ref="dataSource"/>
+    <property name="dataSource" ref="unpooledDataSourceDataSource"/>
     <!--
      Directly specify the location of the MyBatis mapper xml file. This
      is NOT required when using MapperScannerConfigurer or

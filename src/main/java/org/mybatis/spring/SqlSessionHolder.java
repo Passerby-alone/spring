@@ -27,6 +27,8 @@ import org.springframework.transaction.support.ResourceHolderSupport;
  * that created that {@code SqlSession} is used as a key. {@code ExecutorType} is also kept to be able to check if the
  * user is trying to change it during a TX (that is not allowed) and throw a Exception in that case.
  *
+ * sqlSession持有器 保存当前SqlSession对象
+ *
  * @author Hunter Presnall
  * @author Eduardo Macarron
  */

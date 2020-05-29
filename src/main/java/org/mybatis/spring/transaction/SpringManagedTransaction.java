@@ -45,12 +45,21 @@ public class SpringManagedTransaction implements Transaction {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SpringManagedTransaction.class);
 
+  /**
+   * dataSource 对象
+   * */
   private final DataSource dataSource;
-
+  /**
+   * Connection 对象
+   * */
   private Connection connection;
-
+  /**
+   * 当前链接是否处于事务中
+   * */
   private boolean isConnectionTransactional;
-
+  /**
+   * 是否自动提交
+   * */
   private boolean autoCommit;
 
   public SpringManagedTransaction(DataSource dataSource) {
@@ -64,6 +73,7 @@ public class SpringManagedTransaction implements Transaction {
   @Override
   public Connection getConnection() throws SQLException {
     if (this.connection == null) {
+      // 如果链接不存在，则获取链接
       openConnection();
     }
     return this.connection;
@@ -77,6 +87,7 @@ public class SpringManagedTransaction implements Transaction {
    * false and will always call commit/rollback so we need to no-op that calls.
    */
   private void openConnection() throws SQLException {
+    // 获取链接 将 connection 和 Transaction 通过ThreadLocal关联起来
     this.connection = DataSourceUtils.getConnection(this.dataSource);
     this.autoCommit = this.connection.getAutoCommit();
     this.isConnectionTransactional = DataSourceUtils.isConnectionTransactional(this.connection, this.dataSource);
@@ -112,6 +123,7 @@ public class SpringManagedTransaction implements Transaction {
    */
   @Override
   public void close() throws SQLException {
+    // 释放链接
     DataSourceUtils.releaseConnection(this.connection, this.dataSource);
   }
 

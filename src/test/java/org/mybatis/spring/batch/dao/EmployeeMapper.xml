@@ -22,7 +22,7 @@
 <mapper namespace="org.mybatis.spring.batch.dao.UserDao">
 
   <select id="getEmployeeNoNestedPaging" resultType="org.mybatis.spring.batch.domain.Employee">
-    select distinct id,name,salary from employees limit #{_pagesize} offset #{_skiprows}
+    select distinct id,name,salary,skill from employees limit #{_pagesize} offset #{_skiprows}
   </select>
 
   <select id="getEmployeeNestedPaging" resultMap="results">
